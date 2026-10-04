@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apex-SDLC | Agentic Software Engineering Console</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: #111827;
+      --border: #1f2937;
+      --border-focus: #3b82f6;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --purple: #8b5cf6;
+      --cyan: #06b6d4;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 50px;
+    }
+
+    header {
+      background: linear-gradient(180deg, #131b2e 0%, #090d16 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-schwab { background: rgba(37, 99, 235, 0.2); color: #60a5fa; border: 1px solid rgba(37, 99, 235, 0.4); }
+    .badge-success { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+    .scenario-btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      background-color: var(--card-bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease-in-out;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    button:hover {
+      background-color: #1f2937;
+      border-color: #374151;
+    }
+
+    button.primary {
+      background-color: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    button.primary:hover { background-color: var(--accent-hover); }
+
+    button.purple {
+      background-color: rgba(139, 92, 246, 0.2);
+      border-color: rgba(139, 92, 246, 0.5);
+      color: #c4b5fd;
+    }
+    button.purple:hover { background-color: rgba(139, 92, 246, 0.35); }
+
+    button.amber {
+      background-color: rgba(245, 158, 11, 0.2);
+      border-color: rgba(245, 158, 11, 0.5);
+      color: #fcd34d;
+    }
+    button.amber:hover { background-color: rgba(245, 158, 11, 0.35); }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* Metrics Bar */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .metric-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .metric-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .metric-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .metric-sub {
+      font-size: 0.75rem;
+      color: #10b981;
+      margin-top: 4px;
+    }
+
+    /* Section Headings */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* DAG Pipeline Visualizer */
+    .dag-container {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      overflow-x: auto;
+    }
+
+    .dag-flow {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 900px;
+    }
+
+    .dag-node {
+      background: #1a2234;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      padding: 14px;
+      min-width: 180px;
+      flex: 1;
+      position: relative;
+      transition: all 0.2s;
+    }
+
+    .dag-node.COMPLETED {
+      border-color: #059669;
+      background: linear-gradient(180deg, #132724 0%, #111827 100%);
+    }
+
+    .dag-node.RUNNING {
+      border-color: #3b82f6;
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+    }
+
+    .dag-node.FAILED {
+      border-color: #dc2626;
+      background: rgba(220, 38, 38, 0.1);
+    }
+
+    .dag-node.WAITING_APPROVAL {
+      border-color: #f59e0b;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+    }
+
+    .node-stage {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .node-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin: 4px 0 8px 0;
+      color: #fff;
+    }
+
+    .node-badge {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .arrow {
+      color: #4b5563;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    /* Double Layout: Decision Lineage & URL Tester */
+    .two-col-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 950px) {
+      .two-col-grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .lineage-list {
+      max-height: 400px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .lineage-item {
+      background: #161e2e;
+      border: 1px solid #283548;
+      border-radius: 6px;
+      padding: 12px;
+    }
+
+    .lineage-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--cyan);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .lineage-decision {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .lineage-rationale {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .hash-tag {
+      font-family: monospace;
+      font-size: 0.68rem;
+      color: #6b7280;
+      margin-top: 6px;
+      word-break: break-all;
+    }
+
+    /* Interactive URL Workbench */
+    .form-group {
+      margin-bottom: 14px;
+    }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      background: #1a2234;
+      border: 1px solid #374151;
+      padding: 9px 12px;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 0.88rem;
+    }
+    input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .result-box {
+      margin-top: 16px;
+      background: #161e2e;
+      border: 1px solid #283548;
+      border-radius: 6px;
+      padding: 14px;
+      display: none;
+    }
+
+    .analytics-stats {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .stat-pill {
+      background: #111827;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #1f2937;
+    }
+
+    #loadingOverlay {
+      display: none;
+      font-size: 0.85rem;
+      color: #60a5fa;
+      font-weight: 600;
+      align-items: center;
+      gap: 8px;
+    }
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-top-color: #60a5fa;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand-title">
+      <span>Apex-SDLC Engine</span>
+      <span class="badge badge-schwab">Schwab Architecture Prototype</span>
+      <span class="badge badge-success">Target: PulseURL Core</span>
+    </div>
+
+    <div class="scenario-btn-group">
+      <div id="loadingOverlay"><div class="spinner"></div> Running SDLC Lifecycle...</div>
+      <button class="primary" onclick="runScenario('greenfield')">Run Greenfield</button>
+      <button class="purple" onclick="runScenario('brownfield')">Run Brownfield</button>
+      <button class="amber" onclick="runScenario('ambiguous')">Run Ambiguous</button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Metrics Row -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-label">Pipeline Success Rate</div>
+        <div class="metric-value" id="valSuccessRate">100%</div>
+        <div class="metric-sub">0 Critical Defects</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Mean Time to Repair (MTTR)</div>
+        <div class="metric-value" id="valMTTR">0.0s</div>
+        <div class="metric-sub">Self-Healing Bounded Retries</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Total Pipeline Duration</div>
+        <div class="metric-value" id="valDuration">0.14s</div>
+        <div class="metric-sub">High-Throughput Parallel Execution</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Lineage Decisions Logged</div>
+        <div class="metric-value" id="valDecisions">7</div>
+        <div class="metric-sub">Merkle-Chained Provenance</div>
+      </div>
+    </div>
+
+    <!-- Live DAG Visualizer -->
+    <div>
+      <div class="section-header">
+        <div class="section-title">Governed SDLC Dependency Graph (DAG)</div>
+        <div style="font-size: 0.8rem; color: var(--text-muted);" id="currentScenarioName">Scenario: Greenfield_URL_Shortener</div>
+      </div>
+      <div class="dag-container">
+        <div class="dag-flow" id="dagFlowContainer">
+          <!-- Dynamically populated or default fallback nodes -->
+          <div class="dag-node COMPLETED">
+            <div class="node-stage">Requirement</div>
+            <div class="node-title">Intent Normalization</div>
+            <span class="badge badge-success">Passed</span>
+          </div>
+          <div class="arrow">&rarr;</div>
+          <div class="dag-node COMPLETED">
+            <div class="node-stage">Architecture</div>
+            <div class="node-title">Base62 & Schema</div>
+            <span class="badge badge-success">Passed</span>
+          </div>
+          <div class="arrow">&rarr;</div>
+          <div class="dag-node COMPLETED">
+            <div class="node-stage">Implementation</div>
+            <div class="node-title">Code Generation</div>
+            <span class="badge badge-success">Passed</span>
+          </div>
+          <div class="arrow">&rarr;</div>
+          <div class="dag-node COMPLETED">
+            <div class="node-stage">Verification (Parallel)</div>
+            <div class="node-title">Tests & SSRF Audit</div>
+            <span class="badge badge-success">Synced</span>
+          </div>
+          <div class="arrow">&rarr;</div>
+          <div class="dag-node COMPLETED">
+            <div class="node-stage">Documentation</div>
+            <div class="node-title">OpenAPI & Runbook</div>
+            <span class="badge badge-success">Passed</span>
+          </div>
+          <div class="arrow">&rarr;</div>
+          <div class="dag-node COMPLETED">
+            <div class="node-stage">Human Gate</div>
+            <div class="node-title">Tier 3 Release Sign-off</div>
+            <span class="badge badge-success">Authorized</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dual Layout: Decision Lineage & URL Shortener Sandbox -->
+    <div class="two-col-grid">
+
+      <!-- Decision Lineage Panel -->
+      <div class="panel">
+        <div class="section-header">
+          <div class="section-title">Audit-Grade Decision Lineage</div>
+          <span class="badge badge-schwab">Immutable Audit Trail</span>
+        </div>
+        <div class="lineage-list" id="lineageListContainer">
+          <div class="lineage-item">
+            <div class="lineage-header"><span>REQUIREMENT_ANALYSIS</span><span>t1_req</span></div>
+            <div class="lineage-decision">Normalized requirement into formal SDLC engineering specification</div>
+            <div class="lineage-rationale">Formulated 5 functional, 4 non-functional, and 5 acceptance criteria. Rejected unverified rate limits.</div>
+            <div class="hash-tag">Hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</div>
+          </div>
+          <div class="lineage-item">
+            <div class="lineage-header"><span>ARCHITECTURE_DESIGN</span><span>t2_arch</span></div>
+            <div class="lineage-decision">Selected Base62 encoding over UUIDv4 and sequential IDs</div>
+            <div class="lineage-rationale">Base62 yields compact 6-character tokens (>56.8B combinations) with zero escaping issues.</div>
+            <div class="hash-tag">Hash: 8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92</div>
+          </div>
+          <div class="lineage-item">
+            <div class="lineage-header"><span>SECURITY_COMPLIANCE</span><span>t4b_sec</span></div>
+            <div class="lineage-decision">Enforced Private IP Subnet & Loopback Prohibition</div>
+            <div class="lineage-rationale">Rejects 127.0.0.1, 10.0.0.0/8, 192.168.0.0/16 to guard against Server-Side Request Forgery.</div>
+            <div class="hash-tag">Hash: 3f786850e387550fdab836ed7e6dc881de23001b70e87038c013622150914e2</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live URL Shortener Workbench -->
+      <div class="panel">
+        <div class="section-header">
+          <div class="section-title">Target Artifact: Live URL Shortener Sandbox</div>
+          <span class="badge badge-success">FastAPI Active</span>
+        </div>
+
+        <form id="shortenForm" onsubmit="handleShorten(event)">
+          <div class="form-group">
+            <label>Destination Long URL</label>
+            <input type="text" id="targetUrl" placeholder="https://www.schwab.com/trading" value="https://www.schwab.com/trading" required />
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label>Custom Alias (Optional)</label>
+              <input type="text" id="customAlias" placeholder="schwab-trade" />
+            </div>
+            <div class="form-group">
+              <label>TTL Expiration (Seconds)</label>
+              <input type="number" id="ttlSeconds" placeholder="3600" value="3600" />
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <button type="submit" class="primary" style="flex: 1;">Shorten URL</button>
+            <button type="button" onclick="testSsrfUrl()">Test SSRF Rejection</button>
+          </div>
+        </form>
+
+        <div class="result-box" id="resultBox">
+          <div style="font-size: 0.8rem; color: var(--text-muted);">Generated Short URL:</div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin: 6px 0;">
+            <a id="shortUrlLink" href="#" target="_blank" style="color: #60a5fa; font-weight: 600; font-size: 1.05rem;"></a>
+            <button type="button" onclick="simulateClick()" style="padding: 4px 10px; font-size: 0.75rem;">Simulate Click</button>
+          </div>
+
+          <div class="analytics-stats">
+            <div class="stat-pill">
+              <div style="font-size: 0.72rem; color: var(--text-muted);">Total Clicks</div>
+              <div style="font-size: 1.2rem; font-weight: 700;" id="statClicks">0</div>
+            </div>
+            <div class="stat-pill">
+              <div style="font-size: 0.72rem; color: var(--text-muted);">Unique Visitors</div>
+              <div style="font-size: 1.2rem; font-weight: 700;" id="statVisitors">0</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    let activeShortCode = null;
+
+    async function runScenario(scenarioName) {
+      const loader = document.getElementById("loadingOverlay");
+      loader.style.display = "inline-flex";
+
+      try {
+        const res = await fetch(`/api/orchestrator/run/${scenarioName}`, { method: "POST" });
+        const data = await res.json();
+
+        // Update metrics
+        if (data.metrics) {
+          document.getElementById("valSuccessRate").innerText = `${data.metrics.success_rate_percent}%`;
+          document.getElementById("valMTTR").innerText = `${data.metrics.mttr_seconds}s`;
+          document.getElementById("valDuration").innerText = `${data.metrics.total_duration_seconds}s`;
+          document.getElementById("valDecisions").innerText = data.decisions ? data.decisions.length : 0;
+        }
+
+        document.getElementById("currentScenarioName").innerText = `Scenario: ${data.scenario}`;
+
+        // Render DAG nodes
+        const dagContainer = document.getElementById("dagFlowContainer");
+        dagContainer.innerHTML = "";
+        data.nodes.forEach((node, idx) => {
+          const nodeEl = document.createElement("div");
+          nodeEl.className = `dag-node ${node.status}`;
+          nodeEl.innerHTML = `
+            <div class="node-stage">${node.stage}</div>
+            <div class="node-title">${node.name}</div>
+            <span class="badge ${node.status === 'COMPLETED' ? 'badge-success' : 'badge-schwab'}">${node.status}</span>
+          `;
+          dagContainer.appendChild(nodeEl);
+
+          if (idx < data.nodes.length - 1) {
+            const arr = document.createElement("div");
+            arr.className = "arrow";
+            arr.innerHTML = "&rarr;";
+            dagContainer.appendChild(arr);
+          }
+        });
+
+        // Render Decision Lineage
+        const lineageContainer = document.getElementById("lineageListContainer");
+        lineageContainer.innerHTML = "";
+        data.decisions.forEach(d => {
+          const item = document.createElement("div");
+          item.className = "lineage-item";
+          item.innerHTML = `
+            <div class="lineage-header"><span>${d.stage}</span><span>${d.task_id}</span></div>
+            <div class="lineage-decision">${d.decision}</div>
+            <div class="lineage-rationale">${d.rationale}</div>
+            <div class="hash-tag">Inputs: ${d.inputs_hash.slice(0, 16)}... | Outputs: ${d.outputs_hash.slice(0, 16)}...</div>
+          `;
+          lineageContainer.appendChild(item);
+        });
+
+      } catch (err) {
+        alert("Error executing scenario: " + err);
+      } finally {
+        loader.style.display = "none";
+      }
+    }
+
+    async function handleShorten(e) {
+      e.preventDefault();
+      const url = document.getElementById("targetUrl").value;
+      const custom_alias = document.getElementById("customAlias").value.trim() || null;
+      const ttl_seconds = parseInt(document.getElementById("ttlSeconds").value) || null;
+
+      try {
+        const res = await fetch("/api/v1/urls", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url, custom_alias, ttl_seconds })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          alert("Error: " + (data.detail || data.error));
+          return;
+        }
+
+        activeShortCode = data.short_code;
+        const link = document.getElementById("shortUrlLink");
+        link.innerText = data.short_url;
+        link.href = data.short_url;
+        document.getElementById("resultBox").style.display = "block";
+        refreshAnalytics();
+      } catch (err) {
+        alert("Request failed: " + err);
+      }
+    }
+
+    function testSsrfUrl() {
+      document.getElementById("targetUrl").value = "http://127.0.0.1:8080/admin";
+      document.getElementById("customAlias").value = "";
+    }
+
+    async function simulateClick() {
+      if (!activeShortCode) return;
+      try {
+        // Perform GET to redirect endpoint to increment telemetry
+        await fetch(`/${activeShortCode}`, { method: "GET" });
+        await refreshAnalytics();
+      } catch (err) {
+        // Redirection might trigger in background
+        await refreshAnalytics();
+      }
+    }
+
+    async function refreshAnalytics() {
+      if (!activeShortCode) return;
+      try {
+        const res = await fetch(`/api/v1/urls/${activeShortCode}/analytics`);
+        if (res.ok) {
+          const data = await res.json();
+          document.getElementById("statClicks").innerText = data.total_clicks;
+          document.getElementById("statVisitors").innerText = data.unique_visitors;
+        }
+      } catch (err) {}
+    }
+  </script>
+</body>
+</html>
